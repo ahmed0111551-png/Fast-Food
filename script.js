@@ -52,7 +52,7 @@
     function applyTheme(theme) {
         html.setAttribute('data-theme', theme);
         const iconStr = theme === 'dark' ? '☀️' : '🌙';
-        document.querySelectorAll('.theme-icon, .theme-icon-mirror').forEach(el => {
+        document.querySelectorAll('.theme-icon').forEach(el => {
             el.textContent = iconStr;
         });
         localStorage.setItem('brTheme', theme);
@@ -78,11 +78,9 @@
             el.textContent = lang === 'ar' ? arText : enText;
         });
 
-        // Update nav lang label (header + mobile drawer)
+        // Update the language label in the header.
         const labelStr = lang === 'ar' ? 'AR' : 'EN';
-        document.querySelectorAll('#langLabel, .lang-label-mirror').forEach(el => {
-            el.textContent = labelStr;
-        });
+        document.getElementById('langLabel').textContent = labelStr;
 
         localStorage.setItem('brLang', lang);
         currentLang = lang;

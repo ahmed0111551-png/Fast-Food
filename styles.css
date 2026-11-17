@@ -2163,49 +2163,6 @@ button {
     }
 }
 
-/* ══════════════════════════════
-   21. MOBILE DRAWER ACTIONS
-══════════════════════════════ */
-
-.mobile-nav-actions {
-    display: none;
-    border-top: 1px solid var(--border);
-    padding: 1.5rem var(--space-lg);
-    margin-top: 1rem;
-}
-
-.mobile-toggles {
-    display: flex !important;
-    gap: 1rem;
-    align-items: center;
-    justify-content: center;
-}
-
-.lang-toggle.sm,
-.theme-toggle.sm {
-    height: 48px;
-    flex: 1;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-md);
-    color: var(--text-secondary);
-}
-
-.theme-icon-mirror {
-    font-size: 1.3rem;
-}
-
-/* ══════════════════════════ Breakpoints ══════════════════════════ */
-
-@media (max-width: 900px) {
-    .mobile-nav-actions {
-        display: block !important;
-    }
-}
-
 @media (max-width: 480px) {
     .nav-container {
         padding: 0 0.75rem;
@@ -2219,11 +2176,6 @@ button {
 }
 
 @media (max-width: 900px) {
-    /* AGGRESSIVE HIDE FOR HEADER: IDs are strong, but !important is stronger */
-    .navbar .nav-actions #langToggle,
-    .navbar .nav-actions #themeToggle {
-        display: none !important;
-    }
     .nav-container {
         padding: 0 0.6rem;
     }
@@ -2247,6 +2199,12 @@ button {
     }
     .logo-icon {
         font-size: 1.15rem;
+    }
+    .nav-actions {
+        gap: 0.25rem;
+    }
+    .lang-toggle {
+        padding-inline: 0.55em;
     }
 }
 
