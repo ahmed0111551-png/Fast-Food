@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>لوحة تحكم المطعم</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <section class="login-card" id="loginPanel" aria-labelledby="loginTitle">
+      <a class="back-link" href="/">العودة إلى الموقع</a>
+      <div class="brand-mark" aria-hidden="true">🔥</div>
+      <h1 id="loginTitle">لوحة تحكم المطعم</h1>
+      <p>سجّل الدخول لإدارة بيانات الموقع والمنيو.</p>
+      <form id="loginForm">
+        <label for="password">كلمة المرور</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required />
+        <button class="primary-button" type="submit">دخول آمن</button>
+      </form>
+      <p class="notice" id="loginNotice" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="dashboard" id="dashboard" hidden>
+      <header class="topbar">
+        <div>
+          <a class="back-link" href="/">عرض الموقع</a>
+          <h1>إدارة المطعم</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="save-status" id="saveStatus" role="status" aria-live="polite"></span>
+          <button class="primary-button save-button" id="saveButton" type="button">حفظ التغييرات</button>
+          <button class="quiet-button" id="logoutButton" type="button">تسجيل الخروج</button>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="أقسام لوحة التحكم">
+        <button class="tab active" type="button" data-tab-target="settingsPanel">بيانات المطعم</button>
+        <button class="tab" type="button" data-tab-target="textsPanel">نصوص الموقع</button>
+        <button class="tab" type="button" data-tab-target="menuPanel">المنيو</button>
+      </nav>
+
+      <section class="panel active" id="settingsPanel">
+        <div class="panel-heading">
+          <div>
+            <h2>بيانات المطعم والتواصل</h2>
+            <p>تظهر التعديلات لجميع زوار الموقع بعد الحفظ.</p>
+          </div>
+        </div>
+        <div class="form-grid" id="settingsFields">
+          <label>اسم المطعم بالإنجليزية<input name="restaurantName" maxlength="120" required /></label>
+          <label>اسم المطعم بالعربية<input name="restaurantNameAr" maxlength="120" required /></label>
+          <label>رقم الهاتف<input name="phone" maxlength="50" /></label>
+          <label>البريد الإلكتروني<input name="email" type="email" maxlength="254" required /></label>
+          <label>رمز العملة<input name="currencySymbol" maxlength="8" required /></label>
+          <label>رابط Instagram<input name="instagram" type="url" inputmode="url" placeholder="https://" /></label>
+          <label>رابط Facebook<input name="facebook" type="url" inputmode="url" placeholder="https://" /></label>
+          <label>رابط TikTok<input name="tiktok" type="url" inputmode="url" placeholder="https://" /></label>
+        </div>
+      </section>
+
+      <section class="panel" id="textsPanel">
+        <div class="panel-heading">
+          <div>
+            <h2>نصوص الموقع</h2>
+            <p>عدّل النص الإنجليزي والعربي. النصوص المتطابقة في الموقع تتحدث معًا.</p>
+          </div>
+          <input class="search-input" id="textSearch" type="search" placeholder="ابحث في النصوص..." aria-label="ابحث في النصوص" />
+        </div>
+        <div class="text-list" id="textList"></div>
+      </section>
+
+      <section class="panel" id="menuPanel">
+        <div class="panel-heading">
+          <div>
+            <h2>إدارة المنيو</h2>
+            <p>أضف الأصناف أو عدّل الاسم والوصف والسعر والصورة والتصنيف.</p>
+          </div>
+          <button class="secondary-button" id="addMenuItem" type="button">＋ إضافة صنف</button>
+        </div>
+        <div class="menu-editor-list" id="menuList"></div>
+      </section>
+    </section>
+  </main>
+  <script src="admin.js"></script>
+</body>
+</html>

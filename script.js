@@ -173,30 +173,60 @@
     function renderCart() {
         if (cartItems.length === 0) {
             cartEmpty.classList.remove('hidden');
-            cartItemsList.innerHTML = '';
-            cartTotalAmount.textContent = '$0.00';
+            cartItemsList.replaceChildren();
+            cartTotalAmount.textContent = formatCurrency(0);
         } else {
             cartEmpty.classList.add('hidden');
-            cartItemsList.innerHTML = cartItems.map((item, index) => `
-        <li class="cart-item">
-          <div class="cart-item-info">
-            <div class="cart-item-name">${currentLang === 'ar' ? item.nameAr : item.nameEn}</div>
-            <div class="cart-item-price">$${(item.price * item.qty).toFixed(2)}</div>
-          </div>
-          <div class="cart-item-controls">
-            <button class="cart-qty-btn" onclick="window.brUpdateQty(${index}, -1)">–</button>
-            <span class="cart-item-qty">${item.qty}</span>
-            <button class="cart-qty-btn" onclick="window.brUpdateQty(${index}, 1)">+</button>
-          </div>
-          <button class="cart-remove" onclick="window.brRemoveItem(${index})" aria-label="Remove item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          </button>
-        </li>
-      `).join('');
+            cartItemsList.replaceChildren(...cartItems.map((item, index) => {
+                const row = document.createElement('li');
+                row.className = 'cart-item';
+
+                const info = document.createElement('div');
+                info.className = 'cart-item-info';
+                const name = document.createElement('div');
+                name.className = 'cart-item-name';
+                name.textContent = currentLang === 'ar' ? item.nameAr : item.nameEn;
+                const price = document.createElement('div');
+                price.className = 'cart-item-price';
+                price.textContent = formatCurrency(item.price * item.qty);
+                info.append(name, price);
+
+                const controls = document.createElement('div');
+                controls.className = 'cart-item-controls';
+                const decrease = document.createElement('button');
+                decrease.className = 'cart-qty-btn';
+                decrease.type = 'button';
+                decrease.textContent = '–';
+                decrease.addEventListener('click', () => window.brUpdateQty(index, -1));
+                const quantity = document.createElement('span');
+                quantity.className = 'cart-item-qty';
+                quantity.textContent = String(item.qty);
+                const increase = document.createElement('button');
+                increase.className = 'cart-qty-btn';
+                increase.type = 'button';
+                increase.textContent = '+';
+                increase.addEventListener('click', () => window.brUpdateQty(index, 1));
+                controls.append(decrease, quantity, increase);
+
+                const remove = document.createElement('button');
+                remove.className = 'cart-remove';
+                remove.type = 'button';
+                remove.setAttribute('aria-label', 'Remove item');
+                remove.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>';
+                remove.addEventListener('click', () => window.brRemoveItem(index));
+
+                row.append(info, controls, remove);
+                return row;
+            }));
 
             const total = cartItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
-            cartTotalAmount.textContent = `$${total.toFixed(2)}`;
+            cartTotalAmount.textContent = formatCurrency(total);
         }
+    }
+
+    function formatCurrency(amount) {
+        const currencySymbol = window.siteSettings?.currencySymbol || '$';
+        return `${currencySymbol}${amount.toFixed(2)}`;
     }
 
     window.brUpdateQty = (index, delta) => {
@@ -232,16 +262,18 @@
     }
 
     // Bind Add Buttons
-    document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+    menuGrid.addEventListener('click', (event) => {
+        const btn = event.target.closest('.add-btn');
+        if (btn) {
             const card = btn.closest('.menu-card');
+            if (!card) return;
             const nameEl = card.querySelector('h3');
             const nameEn = nameEl.getAttribute('data-en') || nameEl.textContent.trim();
             const nameAr = nameEl.getAttribute('data-ar') || nameEn;
-            const price = parseFloat(card.getAttribute('data-price')) || parseFloat(card.querySelector('.menu-price')?.textContent.replace('$', '')) || 0;
+            const price = parseFloat(card.getAttribute('data-price')) || parseFloat(card.querySelector('.menu-price')?.textContent.replace(/[^\d.]/g, '')) || 0;
 
             addToCart(nameEn, nameAr, price);
-        });
+        }
     });
 
     // ══════════════════════════════
@@ -276,7 +308,7 @@
         if (!isValid) return;
 
         // Build order details string for the hidden field
-        const summary = cartItems.map(item => `${item.nameEn} (x${item.qty}) - $${(item.price * item.qty).toFixed(2)}`).join('\n');
+        const summary = cartItems.map(item => `${item.nameEn} (x${item.qty}) - ${formatCurrency(item.price * item.qty)}`).join('\n');
         const total = cartTotalAmount.textContent;
         orderDetailsField.value = `ORDER SUMMARY:\n${summary}\n\nTOTAL: ${total}`;
 
@@ -287,7 +319,8 @@
 
         try {
             const formData = new FormData(orderForm);
-            const response = await fetch('https://formsubmit.co/ajax/ahmed0111551@gmail.com', {
+            const orderEmail = window.siteSettings?.email || 'ahmed0111551@gmail.com';
+            const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(orderEmail)}`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json'
@@ -409,6 +442,11 @@
         Object.keys(map).forEach(id => { const el = document.getElementById(id); if (el) io.observe(el); });
     })();
 
-    init();
+    Promise.resolve(window.siteContentReady)
+        .then(init)
+        .catch((error) => {
+            console.error('Site content initialization failed:', error);
+            init();
+        });
 
 })();
